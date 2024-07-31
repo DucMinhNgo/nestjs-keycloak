@@ -35,6 +35,36 @@ services:
       KEYCLOAK_DB: keycloak
       KEYCLOAK_DB_USER: keycloak
       KEYCLOAK_DB_PASSWORD: keycloak123
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin123 
+  
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: .deploy/api/Dockerfile
+  #   image: xmlking/ngxapi:latest
+  #   container_name: api
+  #   environment:
+  #     NODE_TLS_REJECT_UNAUTHORIZED: 0 
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - postgres
+
+  api:
+    container_name: app
+    build: .
+    tty: true
+    command: yarn start:dev
+    ports:
+      - '3000:3000'
+      - '5555:5555'
+    volumes:
+      - .:/app
+    depends_on:
+      - keycloakdb
+    # env_file:
+    #   - ./prisma/.env
 
 volumes:
   postgres_data:
