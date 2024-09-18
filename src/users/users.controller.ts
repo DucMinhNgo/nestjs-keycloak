@@ -1,15 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RoleDecoratorOptionsInterface, Roles, Unprotected } from 'nest-keycloak-connect';
+import { KeyCloakGuard } from '../keycloak/keycloak.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get('/public')
-  @Unprotected()
+  // @Unprotected()
   getPublic(): string {
     return `from public`;
   }
@@ -20,9 +21,10 @@ export class UsersController {
   }
 
   @Get()
-  @Roles({
-    roles: ['users']
-  })
+  // @Roles({
+  //   roles: ['users']
+  // })
+  @UseGuards(KeyCloakGuard)
   findAll() {
     return this.usersService.findAll();
   }

@@ -20,3 +20,5 @@
 ![alt text](images/image1.png)
 
 - Create two client for user and for admin (and use postman to access them)
+
+https://github.dev/ndeitch/nestjs-keycloak/blob/master/src/decorator/strategy/keycloak.strategy.ts
