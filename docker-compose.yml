@@ -23,6 +23,8 @@ services:
       - keycloakdb
     ports:
       - 8080:8080
+    networks:
+      - keycloak
 
   keycloakdb:
     image: postgres:alpine
@@ -37,6 +39,8 @@ services:
       KEYCLOAK_DB_PASSWORD: keycloak123
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin123 
+    networks:
+      - keycloak
   
   # api:
   #   build:
@@ -62,9 +66,16 @@ services:
     volumes:
       - .:/app
     depends_on:
+      - keycloak_web
       - keycloakdb
+    networks:
+      - keycloak
     # env_file:
     #   - ./prisma/.env
 
 volumes:
   postgres_data:
+
+networks:
+  keycloak:
+    driver: bridge

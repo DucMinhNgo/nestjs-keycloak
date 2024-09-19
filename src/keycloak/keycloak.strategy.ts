@@ -15,9 +15,13 @@ export class KeyCloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
         const type = req.protectionType as string
         const realm = this.realmFromToken(token)
 
-        console.log(realm);
-        console.log(token);
-        await this.keyCloakService.validateAccessToken(realm, token)
+        // console.log(realm);
+        // console.log(token);
+        const jwtToken = req.headers.authorization.split(' ')[1] ?? '';
+        console.log(jwtToken);
+
+        await this.keyCloakService.validateAccessToken(realm, token);
+
 
 
         return true;

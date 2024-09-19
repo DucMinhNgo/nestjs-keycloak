@@ -18,75 +18,66 @@ export class KeyCloakService {
     }
 
     async validateAccessToken(realm: string, token: string): Promise<boolean> {
-        // const keyCloak = new Keycloak({}, {
-        //     resource: this.clientId,
-        //     realm,
-        //     // authServerUrl: this.authorizationServerUrl,
-        //     secret: this.clientSecret,
-        // } as any);
-        // const result = keyCloak.grantManager.validateAccessToken(token);
-        // console.log({ result });
+        const kcConfig = {
+            "confidential-port": 0,
+            "auth-server-url": "http://localhost:8080",
+            // "auth-server-url": "http://keycloak_web:8080",
+            "resource": this.clientId,
+            "ssl-required": "external",
+            "bearer-only": true,
+            "realm": 'nest-master',
+            "secret": this.clientSecret,
+        }
+        console.log(this.clientSecret);
 
-        const tokenResult = await this.clientForRealm(realm)?.grantManager?.validateAccessToken(token)
-        console.log('tokenResult: ', tokenResult);
+        const keyCloak = new Keycloak({}, kcConfig)
+        console.log(keyCloak.grantManager.validateAccessToken(token));
+
+        const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
+        // const userInfo = keyCloak.grantManager.userInfo(token);
+        // console.log({ userInfo });
+
 
         if (typeof tokenResult === 'string') return true
 
         throw new Error('Invalid access token');
+        // await this.clientForRealm(realm, token)
+        // return true;
     }
 
-    private clientForRealm(realm: string): Keycloak.Keycloak {
-        // const kcConfig = {
-        //     clientId: this.clientId,
-        //     secret: this.clientSecret,
-        //     bearerOnly: true,
-        //     serverUrl: 'http://localhost:8080/auth',
-        //     realm,
-        //     realmPublicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsOkEbaeXjjGzzfMDE/bWFg3BnGkTe0/fOpZo5zBGAXg9krOkVOjp4M6HYHI0JsXIxiTKmYaxL1ERgTO2wMBYQXfpA6T4lPrS48qhICZoqtTDrgdsbteHeVH00eAhNjgznwLze38WorT3MNHgJLlfwgOtiASDmW+cc1xP7EFTZyeGeUYbjj9R/ytEzOhyDZgtftrN2bVGiiUHTxJAGBFQ7MT8JRfxvqYS8CBUcBTNJXHSvBuhgj1B+ZbhV1e3YigJNSMvlPIoFOjkYnpUjGlYN73HMmjgX6MpefL8X6nQJg6aS2bPMx8yOtuhnlS3JfBIkEPw+Fo17CXyn/1aNGkYQQIDAQAB',
-        //     'confidential-port': 3000,
-        //     'auth-server-url': 'http://localhost:8080/auth',
-        //     'resource': 'nodejs',
-        //     'ssl-required': 'external',
-        //     "public-client": true,
-        //     verifyTokenAudience: true
-        // };
-        const kcConfig = {
-            "realm": 'nest-master',
-            "auth-server-url": "http://localhost:8080/auth/",
-            "ssl-required": "external",
-            "resource": this.clientId,
-            "verify-token-audience": true,
-            "credentials": {
-                "secret": this.clientSecret
-            },
-            "use-resource-role-mappings": true,
-            "confidential-port": 0,
-            "policy-enforcer": {},
-            "CLIENT_ID": this.clientId,
-            "GRANT_TYPE": "client_credentials",
-            "bearer-only": true,
-            "public-client": true,
-            realmPublicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsOkEbaeXjjGzzfMDE/bWFg3BnGkTe0/fOpZo5zBGAXg9krOkVOjp4M6HYHI0JsXIxiTKmYaxL1ERgTO2wMBYQXfpA6T4lPrS48qhICZoqtTDrgdsbteHeVH00eAhNjgznwLze38WorT3MNHgJLlfwgOtiASDmW+cc1xP7EFTZyeGeUYbjj9R/ytEzOhyDZgtftrN2bVGiiUHTxJAGBFQ7MT8JRfxvqYS8CBUcBTNJXHSvBuhgj1B+ZbhV1e3YigJNSMvlPIoFOjkYnpUjGlYN73HMmjgX6MpefL8X6nQJg6aS2bPMx8yOtuhnlS3JfBIkEPw+Fo17CXyn/1aNGkYQQIDAQAB'
-        }
-        const keyCloak = new Keycloak({}, kcConfig)
+    // private async clientForRealm(realm: string, token: string): Promise<Keycloak.Keycloak> {
+    //     const kcConfig = {
+    //         "confidential-port": 8080,
+    //         "auth-server-url": "http://localhost:8080",
+    //         "resource": this.clientId,
+    //         "ssl-required": "external",
+    //         "bearer-only": true,
+    //         "realm": 'nest-master',
+    //         "secret": this.clientSecret,
+    //     }
+    //     const keyCloak = new Keycloak({}, kcConfig)
 
-        console.log({ keyCloak });
+    //     console.log({ keyCloak });
+    //     console.log("PASS");
+
+    //     console.log(await keyCloak.grantManager.validateAccessToken(token));
+    //     console.log("================================================================");
 
 
-        return keyCloak;
-        // if (!this.clientsCache.has(realm)) {
-        //     this.clientsCache.set(
-        //         // realm,
-        //         // // new Keycloak.default({}, {
-        //         // //     resource: this.clientId,
-        //         // //     realm,
-        //         // //     authServerUrl: this.authorizationServerUrl,
-        //         // //     secret: this.clientSecret,
-        //         // // } as any),
-        //     )
-        // }
+    //     return keyCloak;
+    //     // if (!this.clientsCache.has(realm)) {
+    //     //     this.clientsCache.set(
+    //     //         // realm,
+    //     //         // // new Keycloak.default({}, {
+    //     //         // //     resource: this.clientId,
+    //     //         // //     realm,
+    //     //         // //     authServerUrl: this.authorizationServerUrl,
+    //     //         // //     secret: this.clientSecret,
+    //     //         // // } as any),
+    //     //     )
+    //     // }
 
-        // return this.clientsCache.get(realm)
-    }
+    //     // return this.clientsCache.get(realm)
+    // }
 
 }
