@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-http-bearer'
 import { KeyCloakService } from "./keycloak.service";
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class KeyCloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
@@ -12,17 +13,10 @@ export class KeyCloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
     async validate(req: any, token: string): Promise<boolean> {
         // try {
         console.log('KeyCloakStrategy');
-        const type = req.protectionType as string
         const realm = this.realmFromToken(token)
-
-        // console.log(realm);
-        // console.log(token);
-        const jwtToken = req.headers.authorization.split(' ')[1] ?? '';
-        console.log(jwtToken);
-
         await this.keyCloakService.validateAccessToken(realm, token);
-
-
+        const userInfo = jwt.decode(token);
+        console.log({ userInfo });
 
         return true;
         // } catch (error) {

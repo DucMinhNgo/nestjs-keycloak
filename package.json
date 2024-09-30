@@ -28,6 +28,7 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "apollo-server-express": "^3.13.0",
+    "jsonwebtoken": "^9.0.2",
     "keycloak-connect": "^11.0.2",
     "nest-keycloak-connect": "^1.10.1",
     "passport": "^0.7.0",

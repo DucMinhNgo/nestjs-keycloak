@@ -28,21 +28,11 @@ export class KeyCloakService {
             "realm": 'nest-master',
             "secret": this.clientSecret,
         }
-        console.log(this.clientSecret);
-
         const keyCloak = new Keycloak({}, kcConfig)
-        console.log(keyCloak.grantManager.validateAccessToken(token));
-
         const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
-        // const userInfo = keyCloak.grantManager.userInfo(token);
-        // console.log({ userInfo });
 
-
-        if (typeof tokenResult === 'string') return true
-
-        throw new Error('Invalid access token');
-        // await this.clientForRealm(realm, token)
-        // return true;
+        if (typeof tokenResult === 'string') return true;
+        else { throw new Error('Invalid access token'); }
     }
 
     // private async clientForRealm(realm: string, token: string): Promise<Keycloak.Keycloak> {
