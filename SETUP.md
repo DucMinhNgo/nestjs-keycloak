@@ -30,3 +30,9 @@
 - Create two client for user and for admin (and use postman to access them)
 
 https://github.dev/ndeitch/nestjs-keycloak/blob/master/src/decorator/strategy/keycloak.strategy.ts
+
+https://www.meetri.in/blogs/key-cloak-with-nestjs-iam.html
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)

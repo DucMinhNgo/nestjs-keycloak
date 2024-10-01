@@ -5,9 +5,11 @@ import { AuthGuard, KeycloakConnectModule, ResourceGuard, RoleGuard } from 'nest
 import { APP_GUARD } from '@nestjs/core';
 import { UsersModule } from './users/users.module';
 import { KeyCloakModule } from './keycloak/keycloak.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     KeyCloakModule,
     UsersModule,
   ],

@@ -17,6 +17,8 @@ export class KeyCloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
         await this.keyCloakService.validateAccessToken(realm, token);
         const userInfo = jwt.decode(token);
         console.log({ userInfo });
+        console.log(userInfo.realm_access);
+
 
         return true;
         // } catch (error) {

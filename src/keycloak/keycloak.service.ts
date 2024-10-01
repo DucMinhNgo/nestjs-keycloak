@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as Keycloak from 'keycloak-connect'
+import { PolicyEnforcementMode, TokenValidation } from "nest-keycloak-connect";
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class KeyCloakService {
@@ -8,31 +11,53 @@ export class KeyCloakService {
     private readonly clientId: string
     private readonly clientSecret: string
     private readonly authorizationServerUrl: string
+    private readonly secretOrKey: string;
 
-    constructor(configService: ConfigService) {
+    constructor(
+        configService: ConfigService,
+        private readonly httpService: HttpService,
+    ) {
         this.clientId = configService.get('CLIENT_ID')
         this.clientSecret = configService.get('CLIENT_SECRET')
         this.authorizationServerUrl = configService.get('AUTHORIZATION_SERVER_URL')
+        this.secretOrKey = configService.get('KEYCLOAK_REALM_RSA_PUBLIC_KEY')
         console.log(configService.get('CLIENT_ID'));
 
     }
 
     async validateAccessToken(realm: string, token: string): Promise<boolean> {
         const kcConfig = {
-            "confidential-port": 0,
-            "auth-server-url": "http://localhost:8080",
-            // "auth-server-url": "http://keycloak_web:8080",
+            "confidential-port": '0',
+            // "auth-server-url": "http://localhost:8080",
+            "auth-server-url": "http://keycloak_web:8080",
             "resource": this.clientId,
-            "ssl-required": "external",
-            "bearer-only": true,
+            "ssl-required": "false",
+            // "bearer-only": false,
             "realm": 'nest-master',
             "secret": this.clientSecret,
+            secretOrKey: this.secretOrKey,
+            policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
+            tokenValidation: TokenValidation.ONLINE,
         }
+        console.log(kcConfig);
         const keyCloak = new Keycloak({}, kcConfig)
+
+        const test = await firstValueFrom(this.httpService.get(
+            `http://keycloak_web:8080/realms/nest-master/protocol/openid-connect/userinfo`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        ));
+        console.log(test);
+
         const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
+        console.log(tokenResult);
+
 
         if (typeof tokenResult === 'string') return true;
-        else { throw new Error('Invalid access token'); }
+        else { throw new Error('Dustin Invalid access token'); }
     }
 
     // private async clientForRealm(realm: string, token: string): Promise<Keycloak.Keycloak> {
