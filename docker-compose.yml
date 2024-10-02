@@ -12,8 +12,8 @@ services:
       DB_PASSWORD: keycloak123
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin123
-      KEYCLOAK_LOGLEVEL: INFO
-      PROXY_ADDRESS_FORWARDING: 'true'
+      # KEYCLOAK_LOGLEVEL: INFO
+      # PROXY_ADDRESS_FORWARDING: 'true'
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin123 
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
@@ -22,7 +22,7 @@ services:
     depends_on:
       - keycloakdb
     ports:
-      - 8080:8080
+      - 8081:8080
     networks:
       - keycloak
 
@@ -71,10 +71,25 @@ services:
     networks:
       - keycloak
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: '0' 
+      # NODE_TLS_REJECT_UNAUTHORIZED: '0' 
       NODE_ENV: development
+      KEYCLOAK_BASE_URL: http://keycloak_web:8080
     # env_file:
     #   - ./prisma/.env
+  
+  proxy:
+    image: nginx
+    container_name: proxy
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./default-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - keycloak
+    depends_on:
+      - keycloak_web
+      - api
 
 volumes:
   postgres_data:

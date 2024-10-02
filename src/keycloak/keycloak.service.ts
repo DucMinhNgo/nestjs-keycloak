@@ -19,7 +19,7 @@ export class KeyCloakService {
     ) {
         this.clientId = configService.get('CLIENT_ID')
         this.clientSecret = configService.get('CLIENT_SECRET')
-        this.authorizationServerUrl = configService.get('AUTHORIZATION_SERVER_URL')
+        this.authorizationServerUrl = configService.get('KEYCLOAK_BASE_URL')
         this.secretOrKey = configService.get('KEYCLOAK_REALM_RSA_PUBLIC_KEY')
         console.log(configService.get('CLIENT_ID'));
 
@@ -27,9 +27,9 @@ export class KeyCloakService {
 
     async validateAccessToken(realm: string, token: string): Promise<boolean> {
         const kcConfig = {
-            "confidential-port": '0',
-            // "auth-server-url": "http://localhost:8080",
-            "auth-server-url": "http://keycloak_web:8080",
+            // "confidential-port": '0',
+            // "auth-server-url": "http://localhost:8080",  
+            "auth-server-url": this.authorizationServerUrl,
             "resource": this.clientId,
             "ssl-required": "false",
             // "bearer-only": false,
@@ -40,24 +40,31 @@ export class KeyCloakService {
             tokenValidation: TokenValidation.ONLINE,
         }
         console.log(kcConfig);
-        const keyCloak = new Keycloak({}, kcConfig)
+        // const keyCloak = new Keycloak({}, kcConfig)
 
+        const url = `${this.authorizationServerUrl}/realms/nest-master/protocol/openid-connect/userinfo`;
+        console.log(url);
         const test = await firstValueFrom(this.httpService.get(
-            `http://keycloak_web:8080/realms/nest-master/protocol/openid-connect/userinfo`,
+            url,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    client_id: 'nest-user',
                 },
             },
         ));
         console.log(test);
+        return true;
 
-        const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
-        console.log(tokenResult);
+        // const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
+        // const userInfo = await keyCloak.grantManager.userInfo(token);
+        // console.log(tokenResult);
+        // console.log({ userInfo });
 
 
-        if (typeof tokenResult === 'string') return true;
-        else { throw new Error('Dustin Invalid access token'); }
+
+        // if (typeof tokenResult === 'string') return true;
+        // else { throw new Error('Dustin Invalid access token'); }
     }
 
     // private async clientForRealm(realm: string, token: string): Promise<Keycloak.Keycloak> {
