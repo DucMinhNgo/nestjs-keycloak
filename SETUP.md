@@ -21,6 +21,8 @@
 
 ![alt text](images/user-role.png)
 
+![alt text](image-3.png)
+
 # Postman
 
 - Access and get Users https://www.youtube.com/watch?v=lfBYdN79M9c

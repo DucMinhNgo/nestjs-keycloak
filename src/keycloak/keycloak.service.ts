@@ -49,7 +49,6 @@ export class KeyCloakService {
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    client_id: 'nest-user',
                 },
             },
         ));
