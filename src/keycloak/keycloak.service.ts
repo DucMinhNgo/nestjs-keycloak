@@ -27,7 +27,7 @@ export class KeyCloakService {
 
     async validateAccessToken(realm: string, token: string): Promise<boolean> {
         const kcConfig = {
-            // "confidential-port": '0',
+            "confidential-port": '0',
             // "auth-server-url": "http://localhost:8080",  
             "auth-server-url": this.authorizationServerUrl,
             "resource": this.clientId,
@@ -40,30 +40,30 @@ export class KeyCloakService {
             tokenValidation: TokenValidation.ONLINE,
         }
         console.log(kcConfig);
-        // const keyCloak = new Keycloak({}, kcConfig)
+        const keyCloak = new Keycloak({}, kcConfig)
 
-        const url = `${this.authorizationServerUrl}/realms/nest-master/protocol/openid-connect/userinfo`;
-        console.log(url);
-        const test = await firstValueFrom(this.httpService.get(
-            url,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            },
-        ));
-        console.log(test);
-        return true;
+        // const url = `${this.authorizationServerUrl}/realms/nest-master/protocol/openid-connect/userinfo`;
+        // console.log(url);
+        // const test = await firstValueFrom(this.httpService.get(
+        //     url,
+        //     {
+        //         headers: {
+        //             Authorization: `Bearer ${token}`,
+        //         },
+        //     },
+        // ));
+        // console.log(test);
+        // return true;
 
-        // const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
-        // const userInfo = await keyCloak.grantManager.userInfo(token);
+        const tokenResult = await keyCloak.grantManager.validateAccessToken(token);
+        const userInfo = await keyCloak.grantManager.userInfo(token);
         // console.log(tokenResult);
-        // console.log({ userInfo });
+        console.log({ userInfo });
 
 
 
-        // if (typeof tokenResult === 'string') return true;
-        // else { throw new Error('Dustin Invalid access token'); }
+        if (typeof tokenResult === 'string') return true;
+        else { throw new Error('Dustin Invalid access token'); }
     }
 
     // private async clientForRealm(realm: string, token: string): Promise<Keycloak.Keycloak> {
